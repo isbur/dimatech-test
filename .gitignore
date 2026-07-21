@@ -1,4 +1,12 @@
+# Личные файлы
+tmp.md
+TODO.md
+
+# Postgres local data folder
+.local
 
 # pixi environments
 .pixi
 *.egg-info
+
+__pycache__
