@@ -1,6 +1,6 @@
-from decimal import Decimal
-
 from pydantic import BaseModel, ConfigDict, Field
+
+from dimatech.schemas.types import PositiveMoney
 
 
 class PaymentOut(BaseModel):
@@ -10,7 +10,7 @@ class PaymentOut(BaseModel):
     transaction_id: str
     account_id: int
     user_id: int
-    amount: Decimal = Field(gt=0)
+    amount: PositiveMoney
 
 
 class WebhookPaymentIn(BaseModel):
@@ -19,5 +19,5 @@ class WebhookPaymentIn(BaseModel):
     transaction_id: str = Field(min_length=1)
     account_id: int
     user_id: int
-    amount: Decimal = Field(gt=0)
+    amount: PositiveMoney
     signature: str = Field(min_length=1)
