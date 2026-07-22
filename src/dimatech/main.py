@@ -4,6 +4,7 @@ from sanic_ext import Extend
 from sanic_ext.exceptions import ValidationError
 
 from dimatech.api import register_blueprints
+from dimatech.api.errors import format_validation_detail
 from dimatech.config import settings
 from dimatech.db.session import setup_db
 
@@ -19,14 +20,12 @@ def create_app() -> Sanic:
 
     @app.exception(ValidationError)
     async def handle_validation_error(
-        _request: Request,
+        request: Request,
         exception: ValidationError,
     ) -> JSONResponse:
         return json(
             {
-                "description": "Unprocessable Entity",
-                "status": 422,
-                "message": exception.message,
+                "detail": format_validation_detail(request, exception),
             },
             status=422,
         )
