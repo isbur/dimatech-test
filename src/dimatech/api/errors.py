@@ -30,6 +30,15 @@ def format_validation_detail(
     model = _resolve_body_model(exception.message or "")
     body = request.json
 
+    if model is not None and body is None:
+        return [
+            {
+                "loc": ["body"],
+                "msg": "Request body is required",
+                "type": "missing",
+            }
+        ]
+
     if model is not None and isinstance(body, dict):
         try:
             model.model_validate(body)
@@ -44,7 +53,6 @@ def format_validation_detail(
             ]
 
     return [{"loc": [], "msg": exception.message or "Invalid request", "type": "value_error"}]
-
 
 def _resolve_body_model(message: str) -> type[BaseModel] | None:
     match = _BODY_MODEL_RE.match(message)

@@ -62,6 +62,21 @@ async def test_login_rejects_invalid_email(app: Sanic) -> None:
 
 
 @pytest.mark.asyncio
+async def test_login_rejects_missing_body(app: Sanic) -> None:
+    _request, response = await app.asgi_client.post("/api/v1/auth/login")
+    assert response.status_code == 422
+    assert response.json == {
+        "detail": [
+            {
+                "loc": ["body"],
+                "msg": "Request body is required",
+                "type": "missing",
+            }
+        ]
+    }
+
+
+@pytest.mark.asyncio
 async def test_webhook_rejects_non_positive_amount(app: Sanic) -> None:
     _request, response = await app.asgi_client.post(
         "/api/v1/webhooks/payment",
