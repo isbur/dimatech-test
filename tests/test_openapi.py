@@ -41,6 +41,20 @@ async def test_openapi_login_has_request_body_example(app: Sanic) -> None:
 
 
 @pytest.mark.asyncio
+async def test_openapi_me_requires_bearer_auth(app: Sanic) -> None:
+    _request, response = await app.asgi_client.get("/docs/openapi.json")
+    assert response.status_code == 200
+    assert response.json is not None
+
+    schemes = response.json["components"]["securitySchemes"]
+    assert schemes["BearerAuth"]["type"] == "http"
+    assert schemes["BearerAuth"]["scheme"] == "bearer"
+
+    me = response.json["paths"]["/api/v1/users/me"]["get"]
+    assert {"BearerAuth": []} in me["security"]
+
+
+@pytest.mark.asyncio
 async def test_openapi_decimal_fields_are_strings(app: Sanic) -> None:
     _request, response = await app.asgi_client.get("/docs/openapi.json")
     assert response.status_code == 200

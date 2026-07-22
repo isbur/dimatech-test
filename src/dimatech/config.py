@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     )
 
     database_url: str = "postgresql+psycopg://redcoon@localhost:5432/dimatech"
-    jwt_secret: str = "change-me"
+    jwt_secret: str = "change-me-to-a-long-random-secret"
     jwt_expire_minutes: int = 60
     webhook_secret: str = "gfdmhghif38yrf9ew0jkf32"
     host: str = "0.0.0.0"

@@ -25,6 +25,8 @@ sanic-ext = ">=25.12.0, <26"
 alembic = ">=1.18.5, <2"
 psycopg = ">=3.3.4, <4"
 pydantic-settings = ">=2.0, <3"
+pyjwt = ">=2.8, <3"
+bcrypt = ">=4.0, <5"
 
 [feature.dev.dependencies]
 nodejs = ">=26.5.0,<26.6"

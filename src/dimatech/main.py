@@ -1,4 +1,5 @@
 from sanic import Request, Sanic
+from sanic.exceptions import Unauthorized
 from sanic.response import JSONResponse, json
 from sanic_ext import Extend
 from sanic_ext.exceptions import ValidationError
@@ -14,6 +15,13 @@ def create_app() -> Sanic:
     app.config.OAS = True
     app.config.OAS_UI_DEFAULT = "swagger"
     Extend(app)
+    app.ext.openapi.add_security_scheme(
+        "BearerAuth",
+        "http",
+        scheme="bearer",
+        bearer_format="JWT",
+        description="JWT access token from POST /api/v1/auth/login",
+    )
 
     register_blueprints(app)
     setup_db(app)
@@ -30,11 +38,19 @@ def create_app() -> Sanic:
             status=422,
         )
 
+    @app.exception(Unauthorized)
+    async def handle_unauthorized(
+        _request: Request,
+        exception: Unauthorized,
+    ) -> JSONResponse:
+        return json({"detail": exception.args[0] if exception.args else "Unauthorized"}, status=401)
+
     @app.get("/health")
     async def health(_request: Request) -> JSONResponse:
         return json({"status": "ok"})
 
     return app
+
 
 
 if __name__ == "__main__":
