@@ -55,3 +55,5 @@ if ! psql -h localhost -p 5432 -lqt | cut -d \| -f 1 | grep -qw dimatech; then
   echo "[INFO] Creating database dimatech"
   psql -h localhost -p 5432 -c "CREATE DATABASE dimatech"
 fi
+
+pixi run dev
