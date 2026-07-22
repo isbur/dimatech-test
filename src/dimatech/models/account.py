@@ -17,7 +17,6 @@ class Account(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
     balance: Mapped[Decimal] = mapped_column(
-        # Не избыточно?
         Numeric[Decimal](12, 2),
         default=Decimal("0.00"),
         server_default="0.00",
