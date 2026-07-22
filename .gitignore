@@ -2,6 +2,9 @@
 tmp.md
 TODO.md
 
+# Local env
+.env
+
 # Postgres local data folder
 .local
 

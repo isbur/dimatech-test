@@ -8,6 +8,9 @@ version = "0.1.0"
 [tasks]
 up = "scripts/up.sh"
 down = "scripts/down.sh"
+pyright = "pyright"
+dev = "PYTHONPATH=src sanic dimatech.main:create_app --factory --dev --host=0.0.0.0 --port=8000"
+test = "PYTHONPATH=src pytest"
 
 [dependencies]
 python = ">=3.14.6,<3.15"
@@ -17,6 +20,20 @@ postgresql = ">=18.4,<19"
 sanic = ">=25.12.1, <26"
 sqlalchemy = ">=2.0.51, <3"
 pydantic = ">=2.13.4, <3"
+email-validator = ">=2.0,<3"
 sanic-ext = ">=25.12.0, <26"
 alembic = ">=1.18.5, <2"
 psycopg = ">=3.3.4, <4"
+pydantic-settings = ">=2.0, <3"
+
+[feature.dev.dependencies]
+nodejs = ">=26.5.0,<26.6"
+
+[feature.dev.pypi-dependencies]
+pyright = ">=1.1.411, <2"
+pytest = ">=9.1.1, <10"
+pytest-asyncio = ">=1.0, <2"
+sanic-testing = ">=24.6, <25"
+
+[environments]
+default = ["default", "dev"]
