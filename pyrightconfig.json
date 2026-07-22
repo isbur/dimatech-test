@@ -1,5 +1,5 @@
 {
-  "include": ["src"],
+  "include": ["src", "tests"],
   "extraPaths": ["src"],
   "exclude": ["**/.pixi", "**/.local", "**/__pycache__"]
 }
