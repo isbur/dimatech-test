@@ -6,8 +6,10 @@ from typing import Any
 from pydantic import BaseModel
 from pydantic import ValidationError as PydanticValidationError
 from sanic import Request
+from sanic.exceptions import HTTPException
 from sanic_ext.exceptions import ValidationError
 
+from dimatech.schemas.account import AccountCreate
 from dimatech.schemas.auth import LoginRequest
 from dimatech.schemas.payment import WebhookPaymentIn
 from dimatech.schemas.user import UserCreate, UserUpdate
@@ -18,8 +20,14 @@ _BODY_MODELS: dict[str, type[BaseModel]] = {
     "LoginRequest": LoginRequest,
     "UserCreate": UserCreate,
     "UserUpdate": UserUpdate,
+    "AccountCreate": AccountCreate,
     "WebhookPaymentIn": WebhookPaymentIn,
 }
+
+
+class Conflict(HTTPException):
+    status_code = 409
+    quiet = True
 
 
 def format_validation_detail(

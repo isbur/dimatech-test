@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from dimatech.config import settings
-from dimatech.deps import get_current_user, get_session
+from dimatech.deps import Admin, get_current_admin, get_current_user, get_session
 from dimatech.models.user import User
 
 _engine: AsyncEngine | None = None
@@ -53,6 +53,7 @@ def setup_db(app: Sanic) -> None:
     app.ctx.sessionmaker = sessionmaker
     app.ext.add_dependency(AsyncSession, get_session)
     app.ext.add_dependency(User, get_current_user)
+    app.ext.add_dependency(Admin, get_current_admin)
 
     @app.after_server_stop
     async def on_after_server_stop(_app: Sanic) -> None:

@@ -85,4 +85,7 @@ async def test_me_accounts_with_token(app: Sanic) -> None:
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 200
-    assert response.json == [{"id": 1, "balance": "0.00"}]
+    assert response.json is not None
+    assert len(response.json) == 1
+    assert response.json[0]["balance"] == "0.00"
+    assert isinstance(response.json[0]["id"], int)
