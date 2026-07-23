@@ -56,4 +56,6 @@ if ! psql -h localhost -p 5432 -lqt | cut -d \| -f 1 | grep -qw dimatech; then
   psql -h localhost -p 5432 -c "CREATE DATABASE dimatech"
 fi
 
+alembic upgrade head
+
 pixi run dev
