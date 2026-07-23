@@ -3,6 +3,7 @@ from sanic.response import JSONResponse, json
 from sanic_ext import openapi, validate
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from dimatech.api import openapi_examples as ex
 from dimatech.api.openapi_body import json_body, json_content
 from dimatech.deps import Admin
 from dimatech.schemas.errors import MessageResponse, ValidationErrorResponse
@@ -16,9 +17,21 @@ bp = Blueprint("admin", url_prefix="/admin")
 @openapi.summary("List users")
 @openapi.description("Admin: list users with their accounts and balances.")
 @openapi.secured("BearerAuth")
-@openapi.response(200, json_content(list[UserWithAccounts]), "OK")
-@openapi.response(401, json_content(MessageResponse), "Unauthorized")
-@openapi.response(403, json_content(MessageResponse), "Forbidden")
+@openapi.response(
+    200,
+    json_content(list[UserWithAccounts], example=ex.USERS_WITH_ACCOUNTS),
+    "OK",
+)
+@openapi.response(
+    401,
+    json_content(MessageResponse, example=ex.UNAUTHORIZED_MISSING_AUTH),
+    "Unauthorized",
+)
+@openapi.response(
+    403,
+    json_content(MessageResponse, example=ex.FORBIDDEN_ADMIN),
+    "Forbidden",
+)
 async def list_users(
     _request: Request,
     admin: Admin,
@@ -50,11 +63,31 @@ async def list_users(
     ),
     required=True,
 )
-@openapi.response(201, json_content(UserPublic), "Created")
-@openapi.response(401, json_content(MessageResponse), "Unauthorized")
-@openapi.response(403, json_content(MessageResponse), "Forbidden")
-@openapi.response(409, json_content(MessageResponse), "Conflict")
-@openapi.response(422, json_content(ValidationErrorResponse), "Validation error")
+@openapi.response(
+    201,
+    json_content(UserPublic, example=ex.USER_CREATED),
+    "Created",
+)
+@openapi.response(
+    401,
+    json_content(MessageResponse, example=ex.UNAUTHORIZED_MISSING_AUTH),
+    "Unauthorized",
+)
+@openapi.response(
+    403,
+    json_content(MessageResponse, example=ex.FORBIDDEN_ADMIN),
+    "Forbidden",
+)
+@openapi.response(
+    409,
+    json_content(MessageResponse, example=ex.CONFLICT_EMAIL),
+    "Conflict",
+)
+@openapi.response(
+    422,
+    json_content(ValidationErrorResponse, example=ex.VALIDATION_SHORT_PASSWORD),
+    "Validation error",
+)
 @validate(json=UserCreate)
 async def create_user(
     _request: Request,
@@ -83,12 +116,36 @@ async def create_user(
     ),
     required=True,
 )
-@openapi.response(200, json_content(UserPublic), "OK")
-@openapi.response(401, json_content(MessageResponse), "Unauthorized")
-@openapi.response(403, json_content(MessageResponse), "Forbidden")
-@openapi.response(404, json_content(MessageResponse), "Not found")
-@openapi.response(409, json_content(MessageResponse), "Conflict")
-@openapi.response(422, json_content(ValidationErrorResponse), "Validation error")
+@openapi.response(
+    200,
+    json_content(UserPublic, example=ex.USER_UPDATED),
+    "OK",
+)
+@openapi.response(
+    401,
+    json_content(MessageResponse, example=ex.UNAUTHORIZED_MISSING_AUTH),
+    "Unauthorized",
+)
+@openapi.response(
+    403,
+    json_content(MessageResponse, example=ex.FORBIDDEN_ADMIN),
+    "Forbidden",
+)
+@openapi.response(
+    404,
+    json_content(MessageResponse, example=ex.NOT_FOUND_USER),
+    "Not found",
+)
+@openapi.response(
+    409,
+    json_content(MessageResponse, example=ex.CONFLICT_EMAIL),
+    "Conflict",
+)
+@openapi.response(
+    422,
+    json_content(ValidationErrorResponse, example=ex.VALIDATION_SHORT_PASSWORD),
+    "Validation error",
+)
 @validate(json=UserUpdate)
 async def update_user(
     _request: Request,
@@ -106,10 +163,26 @@ async def update_user(
 @openapi.summary("Delete user")
 @openapi.description("Admin: delete a user.")
 @openapi.secured("BearerAuth")
-@openapi.response(200, json_content(MessageResponse), "Deleted")
-@openapi.response(401, json_content(MessageResponse), "Unauthorized")
-@openapi.response(403, json_content(MessageResponse), "Forbidden")
-@openapi.response(404, json_content(MessageResponse), "Not found")
+@openapi.response(
+    200,
+    json_content(MessageResponse, example=ex.USER_DELETED),
+    "Deleted",
+)
+@openapi.response(
+    401,
+    json_content(MessageResponse, example=ex.UNAUTHORIZED_MISSING_AUTH),
+    "Unauthorized",
+)
+@openapi.response(
+    403,
+    json_content(MessageResponse, example=ex.FORBIDDEN_SELF_DELETE),
+    "Forbidden",
+)
+@openapi.response(
+    404,
+    json_content(MessageResponse, example=ex.NOT_FOUND_USER),
+    "Not found",
+)
 async def delete_user(
     _request: Request,
     user_id: int,

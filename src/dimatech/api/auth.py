@@ -5,6 +5,7 @@ from sanic_ext import openapi, validate
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from dimatech.api import openapi_examples as ex
 from dimatech.api.openapi_body import json_body, json_content
 from dimatech.models.user import User
 from dimatech.schemas.auth import LoginRequest, TokenResponse
@@ -28,9 +29,21 @@ bp = Blueprint("auth", url_prefix="/auth")
     ),
     required=True,
 )
-@openapi.response(200, json_content(TokenResponse), "OK")
-@openapi.response(401, json_content(MessageResponse), "Invalid credentials")
-@openapi.response(422, json_content(ValidationErrorResponse), "Validation error")
+@openapi.response(
+    200,
+    json_content(TokenResponse, example=ex.TOKEN_RESPONSE),
+    "OK",
+)
+@openapi.response(
+    401,
+    json_content(MessageResponse, example=ex.UNAUTHORIZED_CREDENTIALS),
+    "Invalid credentials",
+)
+@openapi.response(
+    422,
+    json_content(ValidationErrorResponse, example=ex.VALIDATION_INVALID_EMAIL),
+    "Validation error",
+)
 @validate(json=LoginRequest)
 async def login(
     _request: Request,

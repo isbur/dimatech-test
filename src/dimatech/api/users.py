@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from dimatech.api import openapi_examples as ex
 from dimatech.api.openapi_body import json_content
 from dimatech.models.payment import Payment
 from dimatech.models.user import User
@@ -20,8 +21,16 @@ bp = Blueprint("users", url_prefix="/users")
 @openapi.summary("Current user")
 @openapi.description("Return id, email, full_name of the authenticated user.")
 @openapi.secured("BearerAuth")
-@openapi.response(200, json_content(UserPublic), "OK")
-@openapi.response(401, json_content(MessageResponse), "Unauthorized")
+@openapi.response(
+    200,
+    json_content(UserPublic, example=ex.USER_PUBLIC),
+    "OK",
+)
+@openapi.response(
+    401,
+    json_content(MessageResponse, example=ex.UNAUTHORIZED_MISSING_AUTH),
+    "Unauthorized",
+)
 async def get_me(_request: Request, user: User) -> JSONResponse:
     return json(UserPublic.model_validate(user).model_dump(mode="json"))
 
@@ -32,13 +41,14 @@ async def get_me(_request: Request, user: User) -> JSONResponse:
 @openapi.secured("BearerAuth")
 @openapi.response(
     200,
-    json_content(
-        list[AccountOut],
-        example=[{"id": 1, "balance": "0.00"}],
-    ),
+    json_content(list[AccountOut], example=ex.ACCOUNT_LIST),
     "OK",
 )
-@openapi.response(401, json_content(MessageResponse), "Unauthorized")
+@openapi.response(
+    401,
+    json_content(MessageResponse, example=ex.UNAUTHORIZED_MISSING_AUTH),
+    "Unauthorized",
+)
 async def get_my_accounts(
     _request: Request,
     user: User,
@@ -64,21 +74,14 @@ async def get_my_accounts(
 @openapi.secured("BearerAuth")
 @openapi.response(
     200,
-    json_content(
-        list[PaymentOut],
-        example=[
-            {
-                "id": 1,
-                "transaction_id": "5eae174f-7cd0-472c-bd36-35660f00132b",
-                "account_id": 1,
-                "user_id": 1,
-                "amount": "100.00",
-            }
-        ],
-    ),
+    json_content(list[PaymentOut], example=ex.PAYMENT_LIST),
     "OK",
 )
-@openapi.response(401, json_content(MessageResponse), "Unauthorized")
+@openapi.response(
+    401,
+    json_content(MessageResponse, example=ex.UNAUTHORIZED_MISSING_AUTH),
+    "Unauthorized",
+)
 async def get_my_payments(
     _request: Request,
     user: User,
