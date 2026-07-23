@@ -1,9 +1,10 @@
 from sanic import Request, Sanic
-from sanic.exceptions import Forbidden, NotFound, Unauthorized
+from sanic.exceptions import Forbidden, InvalidUsage, NotFound, Unauthorized
 from sanic.response import JSONResponse, json
-from sanic_ext import Extend
+from sanic_ext import Extend, openapi
 from sanic_ext.exceptions import ValidationError
 
+from dimatech.api import openapi_examples as ex
 from dimatech.api import register_blueprints
 from dimatech.api.errors import Conflict, format_validation_detail
 from dimatech.config import settings
@@ -52,6 +53,16 @@ def create_app() -> Sanic:
             status=401,
         )
 
+    @app.exception(InvalidUsage)
+    async def handle_invalid_usage(
+        _request: Request,
+        exception: InvalidUsage,
+    ) -> JSONResponse:
+        return json(
+            {"detail": exception.args[0] if exception.args else "Bad request"},
+            status=400,
+        )
+
     @app.exception(Forbidden)
     async def handle_forbidden(
         _request: Request,
@@ -83,6 +94,21 @@ def create_app() -> Sanic:
         )
 
     @app.get("/health")
+    @openapi.summary("Health check")
+    @openapi.response(
+        200,
+        {
+            "application/json": {
+                "schema": {
+                    "type": "object",
+                    "properties": {"status": {"type": "string"}},
+                    "required": ["status"],
+                },
+                "example": ex.HEALTH,
+            }
+        },
+        "OK",
+    )
     async def health(_request: Request) -> JSONResponse:
         return json({"status": "ok"})
 
