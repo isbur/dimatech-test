@@ -6,13 +6,15 @@ import pytest
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from dimatech.config import settings
 from dimatech.models import Account, Payment, User, UserRole
 
 
 @pytest.fixture
-async def db_session() -> AsyncIterator[AsyncSession]:
-    engine = create_async_engine(settings.database_url, pool_pre_ping=True)
+async def db_session(database_url: str | None) -> AsyncIterator[AsyncSession]:
+    if database_url is None:
+        pytest.skip("Postgres unavailable")
+
+    engine = create_async_engine(database_url, pool_pre_ping=True)
     try:
         async with engine.connect() as connection:
             await connection.execute(text("SELECT 1"))

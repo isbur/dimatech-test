@@ -1,11 +1,9 @@
-from pydantic import BaseModel, EmailStr
-
-from dimatech.schemas.types import Password
+from pydantic import BaseModel, EmailStr, Field
 
 
 class LoginRequest(BaseModel):
     email: EmailStr
-    password: Password
+    password: str = Field(min_length=1)
 
 
 class TokenResponse(BaseModel):
