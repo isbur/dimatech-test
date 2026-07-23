@@ -2,8 +2,9 @@ import pytest
 from sanic import Sanic
 
 
+@pytest.mark.integration
 @pytest.mark.asyncio
-async def test_login_rejects_short_password(app: Sanic) -> None:
+async def test_login_short_password_is_unauthorized(app: Sanic) -> None:
     _request, response = await app.asgi_client.post(
         "/api/v1/auth/login",
         json={
@@ -11,20 +12,13 @@ async def test_login_rejects_short_password(app: Sanic) -> None:
             "password": "short",
         },
     )
-    assert response.status_code == 422
-    assert response.json == {
-        "detail": [
-            {
-                "loc": ["password"],
-                "msg": "password must be at least 8 characters long",
-                "type": "value_error",
-            }
-        ]
-    }
+    assert response.status_code == 401
+    assert response.json == {"detail": "Invalid email or password"}
 
 
+@pytest.mark.integration
 @pytest.mark.asyncio
-async def test_login_rejects_password_with_whitespace(app: Sanic) -> None:
+async def test_login_password_with_whitespace_is_unauthorized(app: Sanic) -> None:
     _request, response = await app.asgi_client.post(
         "/api/v1/auth/login",
         json={
@@ -32,16 +26,8 @@ async def test_login_rejects_password_with_whitespace(app: Sanic) -> None:
             "password": "has space1",
         },
     )
-    assert response.status_code == 422
-    assert response.json == {
-        "detail": [
-            {
-                "loc": ["password"],
-                "msg": "password must not contain whitespace",
-                "type": "value_error",
-            }
-        ]
-    }
+    assert response.status_code == 401
+    assert response.json == {"detail": "Invalid email or password"}
 
 
 @pytest.mark.asyncio
@@ -71,6 +57,39 @@ async def test_login_rejects_missing_body(app: Sanic) -> None:
                 "loc": ["body"],
                 "msg": "Request body is required",
                 "type": "missing",
+            }
+        ]
+    }
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_admin_create_rejects_short_password(app: Sanic) -> None:
+    _request, login = await app.asgi_client.post(
+        "/api/v1/auth/login",
+        json={"email": "admin@example.com", "password": "password1"},
+    )
+    assert login.status_code == 200
+    assert login.json is not None
+    token = login.json["access_token"]
+
+    _request, response = await app.asgi_client.post(
+        "/api/v1/admin/users",
+        headers={"Authorization": f"Bearer {token}"},
+        json={
+            "email": "short.pass@example.com",
+            "password": "short",
+            "full_name": "Short",
+            "role": "user",
+        },
+    )
+    assert response.status_code == 422
+    assert response.json == {
+        "detail": [
+            {
+                "loc": ["password"],
+                "msg": "password must be at least 8 characters long",
+                "type": "value_error",
             }
         ]
     }
