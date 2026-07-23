@@ -15,7 +15,6 @@ test = "PYTHONPATH=src pytest"
 
 [dependencies]
 python = ">=3.14.6,<3.15"
-postgresql = ">=18.4,<19"
 
 [pypi-dependencies]
 sanic = ">=25.12.1, <26"
@@ -24,12 +23,13 @@ pydantic = ">=2.13.4, <3"
 email-validator = ">=2.0,<3"
 sanic-ext = ">=25.12.0, <26"
 alembic = ">=1.18.5, <2"
-psycopg = ">=3.3.4, <4"
+psycopg = { version = ">=3.3.4,<4", extras = ["binary"] }
 pydantic-settings = ">=2.0, <3"
 pyjwt = ">=2.8, <3"
 bcrypt = ">=4.0, <5"
 
 [feature.dev.dependencies]
+postgresql = ">=18.4,<19"
 nodejs = ">=26.5.0,<26.6"
 ruff = ">=0.15.22,<0.16"
 
@@ -41,3 +41,4 @@ sanic-testing = ">=24.6, <25"
 
 [environments]
 default = ["default", "dev"]
+dist = ["default"]

@@ -1,42 +1,107 @@
 # dimatech-test
 
-## Инструкция для деплоя без Docker
+REST API (Sanic + SQLAlchemy + PostgreSQL) for the Dimatech take-home assignment.
 
-Проект использует `pixi` для управления зависимостями и локальной средой разработки. `pixi` автоматически устанавливает необходимые версии Python, PostgreSQL и остальных зависимостей проекта.
+## Seed credentials
 
-1. Клонировать репозиторий:
+Created by Alembic migrations:
+
+| Role  | Email               | Password   |
+|-------|---------------------|------------|
+| user  | `user@example.com`  | `password1` |
+| admin | `admin@example.com` | `password1` |
+
+Webhook example secret (also in `.env.example`): `gfdmhghif38yrf9ew0jkf32`.
+
+## Run with Docker Compose (local build)
+
+1. Clone and enter the repo:
+```sh
+git clone https://github.com/isbur/dimatech-test.git
+cd dimatech-test
+```
+
+2. Create `.env` (Compose still needs JWT/webhook secrets from it):
+```sh
+cp .env.example .env
+# edit JWT_SECRET / WEBHOOK_SECRET if you want
+```
+
+3. Build and start Postgres + migrate + app:
+```sh
+docker compose up --build -d
+```
+
+The app image is a two-stage build: Pixi installs the **`dist`** environment
+(runtime deps only, no PostgreSQL/dev tools), then that prefix is copied into a
+distroless runtime.
+4. Open:
+- API: http://localhost:8000
+- OpenAPI / Swagger: http://localhost:8000/docs
+- Health: http://localhost:8000/health
+
+Stop:
+```sh
+docker compose down
+```
+
+### Optional: pull image from GHCR (no local build)
+
+If the image is published to GitHub Container Registry:
+
+```sh
+docker compose -f compose.yaml -f compose.ghcr.yaml pull
+docker compose -f compose.yaml -f compose.ghcr.yaml up -d
+```
+
+Publish (maintainer):
+```sh
+docker build -t ghcr.io/isbur/dimatech-test:latest .
+echo "$GHCR_TOKEN" | docker login ghcr.io -u USERNAME --password-stdin
+docker push ghcr.io/isbur/dimatech-test:latest
+```
+
+## Run without Docker (pixi)
+
+The project uses `pixi` for the local toolchain (Python, PostgreSQL, deps).
+
+1. Clone the repository:
 ```sh
 git clone https://github.com/isbur/dimatech-test.git
 ```
 
-
-2. Установить `pixi`:
+2. Install `pixi`:
 ```sh
 curl -fsSL https://pixi.sh/install.sh | sh
 ```
 
-3. Перейти в репозиторий:
+3. Enter the repository:
 ```sh
 cd dimatech-test
 ```
 
-4. Установить зависимости:
+4. Install dependencies:
+```sh
 pixi install
 ```
 
-5. Сгенерировать JWT_SECRET, WEBHOOK_SECRET, создать и отредактировать файл `.env`:
-```
+5. Generate secrets, create and edit `.env`:
+```sh
 openssl rand -hex 32
 python -c "import secrets,string; a=string.ascii_lowercase+string.digits; print(''.join(secrets.choice(a) for _ in range(23)))"
 cp .env.example .env
 nano .env
 ```
 
-6. Чтобы запустить сервисы, выполнить:
+6. Start local Postgres, run migrations, and launch the app:
 ```sh
 pixi run up
 ```
 
+Stop Postgres:
+```sh
+pixi run down
+```
 
 ## Техническое задание
 

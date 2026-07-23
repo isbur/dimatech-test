@@ -1,0 +1,23 @@
+# Local / VCS
+.git
+.github
+.pixi
+.local
+.env
+*.egg-info
+
+# Python junk
+**/__pycache__
+**/*.py[cod]
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+htmlcov
+
+# Docs / scratch (not needed in the image)
+README.md
+tmp.md
+TODO.md
+tests
+pytest.ini
