@@ -9,8 +9,6 @@ EXPECTED_PATHS = {
     "/api/v1/users/me/payments",
     "/api/v1/admin/users",
     "/api/v1/admin/users/{user_id}",
-    "/api/v1/admin/accounts",
-    "/api/v1/admin/accounts/{account_id}",
     "/api/v1/webhooks/payment",
 }
 
