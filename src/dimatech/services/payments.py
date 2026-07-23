@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 from decimal import Decimal
 
 from sanic.exceptions import Forbidden, InvalidUsage, NotFound
@@ -50,7 +51,7 @@ def verify_signature(data: WebhookPaymentIn, secret: str | None = None) -> None:
         user_id=data.user_id,
         secret=secret if secret is not None else settings.webhook_secret,
     )
-    if data.signature != expected:
+    if not hmac.compare_digest(data.signature, expected):
         raise InvalidUsage("Invalid signature")
 
 
