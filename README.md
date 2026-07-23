@@ -24,7 +24,15 @@ cd dimatech-test
 pixi install
 ```
 
-5. Чтобы запустить сервисы, выполнить:
+5. Сгенерировать JWT_SECRET, WEBHOOK_SECRET, создать и отредактировать файл `.env`:
+```
+openssl rand -hex 32
+python -c "import secrets,string; a=string.ascii_lowercase+string.digits; print(''.join(secrets.choice(a) for _ in range(23)))"
+cp .env.example .env
+nano .env
+```
+
+6. Чтобы запустить сервисы, выполнить:
 ```sh
 pixi run up
 ```
