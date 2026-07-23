@@ -1,34 +1,29 @@
-# Default stack: build the app image locally.
-# For a pre-built image from GHCR, see compose.ghcr.yaml.
-
 name: dimatech
 
 services:
   db:
     image: postgres:18-alpine
-    environment:
-      POSTGRES_USER: dimatech
-      POSTGRES_PASSWORD: dimatech
-      POSTGRES_DB: dimatech
+    env_file:
+      - .env
     volumes:
       # Postgres 18+ images expect the volume on /var/lib/postgresql (not .../data).
       - pgdata:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U dimatech -d dimatech"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       timeout: 5s
       retries: 10
     restart: unless-stopped
 
   migrate:
-    image: ghcr.io/isbur/dimatech-test:latest
     build:
       context: .
       dockerfile: Dockerfile
+    image: dimatech-app:local
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql+psycopg://dimatech:dimatech@db:5432/dimatech
+      POSTGRES_HOST: db
     depends_on:
       db:
         condition: service_healthy
@@ -36,14 +31,14 @@ services:
     restart: "no"
 
   app:
-    image: ghcr.io/isbur/dimatech-test:latest
     build:
       context: .
       dockerfile: Dockerfile
+    image: dimatech-app:local
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql+psycopg://dimatech:dimatech@db:5432/dimatech
+      POSTGRES_HOST: db
       HOST: 0.0.0.0
       PORT: "8000"
     ports:

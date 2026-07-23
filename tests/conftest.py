@@ -133,12 +133,12 @@ def database_url() -> Iterator[str | None]:
         _terminate_and_drop(admin_url, TEST_DATABASE_NAME)
         raise
 
-    original_url = settings.database_url
-    settings.database_url = test_url_str
+    original_override = settings.database_url_override
+    settings.database_url_override = test_url_str
     try:
         yield test_url_str
     finally:
-        settings.database_url = original_url
+        settings.database_url_override = original_override
         try:
             asyncio.run(_dispose_app_engine())
         except Exception:
@@ -159,7 +159,7 @@ def _integration_database(
     if database_url is None:
         pytest.skip("Postgres unavailable")
 
-    settings.database_url = database_url
+    settings.database_url_override = database_url
     yield
     reset_and_reseed(database_url)
 
@@ -168,7 +168,7 @@ def _integration_database(
 def app(database_url: str | None) -> Iterator[Sanic]:
     """App pointed at the ephemeral test DB when Postgres is available."""
     if database_url is not None:
-        settings.database_url = database_url
+        settings.database_url_override = database_url
 
     Sanic.test_mode = True
     application = create_app()
