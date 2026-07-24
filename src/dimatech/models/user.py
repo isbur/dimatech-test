@@ -1,7 +1,8 @@
+from datetime import datetime
 from enum import StrEnum
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Enum, String
+from sqlalchemy import DateTime, Enum, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from dimatech.db.base import Base
@@ -31,6 +32,11 @@ class User(Base):
         ),
         default=UserRole.USER,
         server_default=UserRole.USER,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
     )
 
     accounts: Mapped[list[Account]] = relationship(

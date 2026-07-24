@@ -74,11 +74,10 @@ async def test_admin_create_update_delete_user(app: Sanic) -> None:
     assert created.status_code == 201
     assert created.json is not None
     user_id = created.json["id"]
-    assert created.json == {
-        "id": user_id,
-        "email": email,
-        "full_name": "CRUD User",
-    }
+    assert created.json["email"] == email
+    assert created.json["full_name"] == "CRUD User"
+    assert isinstance(created.json["created_at"], str)
+    assert created.json["created_at"]
 
     _request, updated = await app.asgi_client.patch(
         f"/api/v1/admin/users/{user_id}",

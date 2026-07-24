@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, Field
 
 from dimatech.schemas.types import PositiveMoney
@@ -11,6 +13,7 @@ class PaymentOut(BaseModel):
     account_id: int
     user_id: int
     amount: PositiveMoney
+    created_at: datetime
 
 
 class WebhookPaymentIn(BaseModel):

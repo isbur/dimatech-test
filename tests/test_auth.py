@@ -59,11 +59,12 @@ async def test_me_with_token(app: Sanic) -> None:
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 200
-    assert response.json == {
-        "id": 1,
-        "email": "user@example.com",
-        "full_name": "Test User",
-    }
+    assert response.json is not None
+    assert response.json["id"] == 1
+    assert response.json["email"] == "user@example.com"
+    assert response.json["full_name"] == "Test User"
+    assert isinstance(response.json["created_at"], str)
+    assert response.json["created_at"]
 
 
 @pytest.mark.integration

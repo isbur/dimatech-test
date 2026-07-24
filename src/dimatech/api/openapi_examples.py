@@ -19,18 +19,21 @@ USER_PUBLIC: dict[str, Any] = {
     "id": 1,
     "email": "user@example.com",
     "full_name": "Test User",
+    "created_at": "2026-07-22T18:30:00+00:00",
 }
 
 USER_CREATED: dict[str, Any] = {
     "id": 3,
     "email": "new.user@example.com",
     "full_name": "New User",
+    "created_at": "2026-07-24T12:00:00+00:00",
 }
 
 USER_UPDATED: dict[str, Any] = {
     "id": 1,
     "email": "user@example.com",
     "full_name": "Updated Name",
+    "created_at": "2026-07-22T18:30:00+00:00",
 }
 
 USERS_WITH_ACCOUNTS: list[dict[str, Any]] = [
@@ -38,12 +41,14 @@ USERS_WITH_ACCOUNTS: list[dict[str, Any]] = [
         "id": 1,
         "email": "user@example.com",
         "full_name": "Test User",
+        "created_at": "2026-07-22T18:30:00+00:00",
         "accounts": [{"id": 1, "balance": "0.00"}],
     },
     {
         "id": 2,
         "email": "admin@example.com",
         "full_name": "Test Admin",
+        "created_at": "2026-07-22T18:30:00+00:00",
         "accounts": [],
     },
 ]
@@ -56,6 +61,7 @@ PAYMENT: dict[str, Any] = {
     "account_id": 1,
     "user_id": 1,
     "amount": "100.00",
+    "created_at": "2026-07-23T15:00:00+00:00",
 }
 
 PAYMENT_LIST: list[dict[str, Any]] = [PAYMENT]

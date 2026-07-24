@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 from dimatech.models.user import UserRole
@@ -13,6 +15,7 @@ class UserPublic(BaseModel):
     id: int
     email: EmailStr
     full_name: str
+    created_at: datetime
 
 
 class UserCreate(BaseModel):

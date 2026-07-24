@@ -77,10 +77,10 @@ echo "[INFO] Postgres is ready"
 
 if ! "${PSQL[@]}" -tAc "SELECT 1 FROM pg_roles WHERE rolname = '${POSTGRES_USER}'" | grep -q 1; then
     echo "[INFO] Creating role ${POSTGRES_USER}"
-    "${PSQL[@]}" -c "CREATE ROLE ${POSTGRES_USER} LOGIN PASSWORD ${PASSWORD_SQL}"
+    "${PSQL[@]}" -c "CREATE ROLE ${POSTGRES_USER} LOGIN CREATEDB PASSWORD ${PASSWORD_SQL}"
 else
     echo "[INFO] Updating password for role ${POSTGRES_USER}"
-    "${PSQL[@]}" -c "ALTER ROLE ${POSTGRES_USER} WITH LOGIN PASSWORD ${PASSWORD_SQL}"
+    "${PSQL[@]}" -c "ALTER ROLE ${POSTGRES_USER} WITH LOGIN CREATEDB PASSWORD ${PASSWORD_SQL}"
 fi
 
 if ! "${PSQL[@]}" -tAc "SELECT 1 FROM pg_database WHERE datname = '${POSTGRES_DB}'" | grep -q 1; then
